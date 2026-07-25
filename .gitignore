@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# macOS
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+
+# Runtime / generated (recreate on new machine)
+data/dms_analytics.db
+data/raw/
+data/clips/
+
+# Large training dataset — copy separately if needed
+data/train/
+data/val/
+
+# Model weights (~120MB) — too large for normal GitHub push without Git LFS.
+# Copy manually or use Git LFS; see model_swin/README.md
+model_swin/*.pth

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DMS Driver Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 24px;
+      background: #0f172a;
+      color: #e2e8f0;
+    }
+    h1 { margin-bottom: 4px; }
+    p { color: #94a3b8; }
+    .hint { font-size: 14px; margin-bottom: 16px; }
+    .chart-box {
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 900px;
+      position: relative;
+      height: 420px;
+      margin-bottom: 24px;
+    }
+    #plot2Section {
+      display: none;
+      margin-top: 8px;
+    }
+    #plot2Title {
+      margin-bottom: 8px;
+      color: #e2e8f0;
+    }
+    #errorBox {
+      display: none;
+      margin-top: 12px;
+      padding: 12px;
+      background: #7f1d1d;
+      border-radius: 8px;
+      color: #fecaca;
+    }
+  </style>
+</head>
+<body>
+  <h1>Driver Distraction Dashboard</h1>
+  <p>Plot 1 — Total minutes distracted (last 7 days)</p>
+  <p class="hint">Click a day bar to see activity breakdown (Plot 2).</p>
+
+  <div class="chart-box">
+    <canvas id="weekChart"></canvas>
+  </div>
+
+  <div id="plot2Section">
+    <h2 id="plot2Title">Plot 2 — Activity breakdown</h2>
+    <div class="chart-box">
+      <canvas id="dayChart"></canvas>
+    </div>
+  </div>
+
+  <div id="errorBox"></div>
+
+  <script>
+    let dayDates = [];
+    let dayChart = null;
+
+    function showError(message) {
+      const box = document.getElementById("errorBox");
+      box.style.display = "block";
+      box.textContent = message;
+    }
+
+    function chartOptions(yLabel) {
+      return {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: { display: true, text: yLabel, color: "#e2e8f0" },
+            ticks: { color: "#e2e8f0" },
+            grid: { color: "#334155" }
+          },
+          x: {
+            ticks: { color: "#e2e8f0" },
+            grid: { color: "#334155" }
+          }
+        },
+        plugins: {
+          legend: { labels: { color: "#e2e8f0" } }
+        }
+      };
+    }
+
+    async function loadDayChart(dateStr, weekdayLabel) {
+      const resp = await fetch("/api/day/" + dateStr);
+      if (!resp.ok) {
+        showError("API error: /api/day/" + dateStr + " returned " + resp.status);
+        return;
+      }
+
+      const data = await resp.json();
+      const activities = data.activities || [];
+
+      document.getElementById("plot2Section").style.display = "block";
+      document.getElementById("plot2Title").textContent =
+        "Plot 2 — " + weekdayLabel + " " + dateStr + " (by activity)";
+
+      const labels = activities.map(function (a) { return a.activity; });
+      const values = activities.map(function (a) { return a.minutes; });
+
+      if (dayChart) {
+        dayChart.destroy();
+      }
+
+      dayChart = new Chart(document.getElementById("dayChart"), {
+        type: "bar",
+        data: {
+          labels: labels.length ? labels : ["No distractions"],
+          datasets: [{
+            label: "Minutes distracted",
+            data: values.length ? values : [0],
+            backgroundColor: "#f97316",
+            minBarLength: 8,
+          }]
+        },
+        options: chartOptions("Minutes")
+      });
+
+      document.getElementById("plot2Section").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    async function loadWeekChart() {
+      try {
+        if (typeof Chart === "undefined") {
+          showError("Chart.js did not load. Check your internet connection and refresh.");
+          return;
+        }
+
+        const resp = await fetch("/api/week");
+        if (!resp.ok) {
+          showError("API error: /api/week returned " + resp.status);
+          return;
+        }
+
+        const data = await resp.json();
+        if (!data.days || !data.days.length) {
+          showError("No day data returned from /api/week");
+          return;
+        }
+
+        dayDates = data.days.map(function (d) { return d.date; });
+        const labels = data.days.map(function (d) { return d.weekday; });
+        const values = data.days.map(function (d) { return d.total_distraction_minutes; });
+
+        new Chart(document.getElementById("weekChart"), {
+          type: "bar",
+          data: {
+            labels: labels,
+            datasets: [{
+              label: "Minutes distracted",
+              data: values,
+              backgroundColor: "#38bdf8",
+              minBarLength: 8,
+            }]
+          },
+          options: {
+            ...chartOptions("Minutes"),
+            onHover: function (event, elements) {
+              event.native.target.style.cursor = elements.length ? "pointer" : "default";
+            },
+            onClick: function (event, _elements, chart) {
+              // I treat the whole day column as clickable, not just the tiny bar.
+              const points = chart.getElementsAtEventForMode(
+                event, "index", { intersect: false }, true
+              );
+              if (!points.length) {
+                return;
+              }
+              const index = points[0].index;
+              loadDayChart(dayDates[index], labels[index]);
+            },
+            plugins: {
+              ...chartOptions("Minutes").plugins,
+              tooltip: {
+                callbacks: {
+                  footer: function () {
+                    return "Click anywhere in this column";
+                  }
+                }
+              }
+            }
+          }
+        });
+      } catch (err) {
+        showError("Chart failed: " + err.message);
+        console.error(err);
+      }
+    }
+
+    loadWeekChart();
+  </script>
+</body>
+</html>

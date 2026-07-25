@@ -1,0 +1,94 @@
+
+camera:
+  source: 0
+  target_fps: 15
+  frame_width: 640
+  frame_height: 480
+  queue_size: 30
+  watchdog_timeout_ms: 2000
+
+logging:
+  level: INFO
+
+
+buffer:
+  clip_length : 16  #i am collecting 16 frames per clip to enter into my model
+  stride : 8  #i am making a new clip every 8 frames which is 50% overlap with the previous clip
+  model_size : 224 #i am resixing the frames to 224x224 before entering into my model
+  normalize : "0to1" #i am dividoing pixel values by 255.0 so they land between 0.0 and 1.0.. it means my data is scaled bettween 0 and 1
+
+#These are the model settings for my pHASE 3-- I can remove it anytime or change it to fit my needs
+model:
+  clip_length: 16
+  model_size: 224
+  num_classes: 5
+  class_names:
+    - eat
+    - seatbelt
+    - jacket
+    - sunglasses
+    - magazine
+  normalize: "imagenet"
+  imagenet_mean: [0.485, 0.456, 0.406]
+  imagenet_std: [0.229, 0.224, 0.225]
+
+pytorch:
+  weights_path: "model_swin/drive_and_act_swin_v1.pth"
+  device: "mps"   # I m using mps since i have Apple GPU
+  architecture: "swin3d_t"
+
+
+state_manager: #i can change all these values later 
+  default_threshold: 0.50  #i am setting a default threshold to 50% for my state manager
+  exit_threshold: 0.35   #I am leaving a state only when confidence drops below 35%
+  normal_class: "normal_driving"  #i am calling it normal driving when nothing is confident enough
+  smoothing_windows:  #I am requiring 3 or 5 consistent predictions before I switch state
+    eat: 3
+    seatbelt: 3
+    jacket: 5
+    sunglasses: 3
+    magazine: 5
+
+alert_trigger: # Phase 6 — I fire alerts when a distraction lasts long enough
+  shadow_mode: false  # false = LIVE alerts (sound + log); true = test/log only
+  audio_enabled: true  # I play a sound when a live alert fires
+  default_sound: "/System/Library/Sounds/Glass.aiff"  # fallback if activity has no tone
+  activity_sounds:  # I use a different tone per distraction so the driver can tell them apart
+    eat: "/System/Library/Sounds/Pop.aiff"
+    seatbelt: "/System/Library/Sounds/Ping.aiff"
+    jacket: "/System/Library/Sounds/Blow.aiff"
+    sunglasses: "/System/Library/Sounds/Tink.aiff"
+    magazine: "/System/Library/Sounds/Hero.aiff"
+  cooldown_seconds: 10  # I wont repeat the same alert for 10 seconds
+  speed_gating_enabled: false  # i willl turn this on in the car when I have GPS speed
+  min_speed_kmh: 5  # I only alert above this speed when gating is enabled, i can also change it later
+  duration_thresholds:  # I alert after this many seconds in a stable state
+    eat: 2.0
+    seatbelt: 5.0
+    jacket: 4.0
+    sunglasses: 3.0
+    magazine: 3.0
+  messages:
+    eat: "Please avoid eating while driving"
+    seatbelt: "Please adjust your seatbelt safely"
+    jacket: "Please adjust your jacket when stopped"
+    sunglasses: "Please focus on the road"
+    magazine: "Please put reading material down while driving"
+
+
+analytics: #This is for Phase 7, i want to save trip data for the driver dashboard
+  db_path: "data/dms_analytics.db"
+  retention_days: 90 #i want to keep the data for 90 days, i can delete the old rows later in Phase 7 v2
+  distraction_activities: #i am counting these activiies towareds minutes distracted
+    - eat
+    - seatbelt
+    - jacket
+    - sunglasses
+    - magazine
+# I am not including Normal Driving here because it is not a distraction
+
+
+dashboard: #This is for my pHASE 8 - To view distraction history in the dsahboard/broswer
+  host: "127.0.0.1" #local host address 
+  port: 5050
+  db_path: "data/dms_analytics.db"  # i am using the same file as Phase 7 analytics
