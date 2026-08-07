@@ -24,3 +24,7 @@ data/val/
 # Model weights (~120MB) — too large for normal GitHub push without Git LFS.
 # Copy manually or use Git LFS; see model_swin/README.md
 model_swin/*.pth
+
+# Local research / thesis files — not part of the DMS pipeline repo
+scripts/
+docs/FORMS/
