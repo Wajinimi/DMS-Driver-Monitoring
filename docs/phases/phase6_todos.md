@@ -1,4 +1,4 @@
-# Phase 6 — Alert Trigger )
+# Phase 6  Alert Trigger )
 
 **Goal:** Turn stable activity + duration from Phase 5 into actionable alerts  without spamming the driver.
 
@@ -29,7 +29,7 @@ That is **information**. Phase 6 decides **when to act**:
 ## Our TODO checklist
 
 
-| Step | What we build                                              | Status |
+| Step | What i want to build                                              | Status |
 | ---- | ---------------------------------------------------------- | ------ |
 | 1    | Add `alert_trigger` settings to `config.yaml`              | ✅      |
 | 2    | Create `src/phase6/alert_trigger.py` — duration thresholds | ✅      |
