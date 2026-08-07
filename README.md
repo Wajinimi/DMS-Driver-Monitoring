@@ -7,7 +7,7 @@ PyTorch pipeline: webcam → Swin3D → state smoothing → live alerts → SQLi
 ```bash
 python3 -m pip install -r requirements.txt
 # Copy model_swin/drive_and_act_swin_v1.pth (see model_swin/README.md)
-python3 test_phase7.py
+python3 test_live_full.py
 python3 run_dashboard.py   # http://127.0.0.1:5050
 ```
 
