@@ -1,4 +1,4 @@
-# Phase 7 — Analytics Logger )
+# Phase 7 Analytics Logger )
 
 **Goal:** Save driver activity and alerts to SQLite  dashboard-ready for Phase 8.
 
@@ -19,7 +19,7 @@
 ## Our TODO checklist
 
 
-| Step | What we build                                                                | Status |
+| Step | To build                                                                | Status |
 | ---- | ---------------------------------------------------------------------------- | ------ |
 | 1    | `analytics` config + folder scaffold                                         | ✅      |
 | 2    | SQLite schema (trips, activities, alerts)                                    | ✅      |
