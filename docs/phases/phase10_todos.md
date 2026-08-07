@@ -1,6 +1,6 @@
-# Phase 10 — Recommendation Engine + Personal Baselines
+# Phase 10  Recommendation Engine + Personal Baselines
 
-**Locked:** Rule-based coaching (not ML/LLM for v1). Every recommendation explains **which rule fired**.
+**Locked:** Rule-based coaching. Every recommendation explains **which rule fired**.
 
 **Input:** Phase 9 weekly report (`safety_score`, `band`, `top_contributors`, `behavior_pct`).
 
