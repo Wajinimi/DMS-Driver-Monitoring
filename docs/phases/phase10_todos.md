@@ -10,7 +10,7 @@
 
 ## TODO checklist
 
-| Step | What we build | Status |
+| Step | What i want to build | Status |
 |------|---------------|--------|
 | 1 | `coaching` section in `config.yaml` + `RecommendationEngine` skeleton | ✅ |
 | 2 | Score-band rules (High risk / Fair / Good / Excellent) | ✅ |
