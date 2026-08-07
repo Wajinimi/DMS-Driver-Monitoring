@@ -24,7 +24,7 @@
 ## My TODO checklist
 
 
-| Step | What we build                                          | Status |
+| Step | What i wannto build                                          | Status |
 | ---- | ------------------------------------------------------ | ------ |
 | 1    | Add preprocessing settings to `config.yaml`            | ✅      |
 | 2    | Create `sliding_buffer.py` — FIFO deque of 16 frames   | ✅      |
