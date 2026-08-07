@@ -171,4 +171,4 @@ Phase 8  Dashboard — score gauge, weekly report, trends
 
 ---
 
-*Hybrid scoring: locked. Next step: Phase 9 Step 1 — config + `SafetyScoreEngine` skeleton.*
+
