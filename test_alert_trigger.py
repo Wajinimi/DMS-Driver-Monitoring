@@ -1,5 +1,5 @@
 """
-I'm simulating Phase 5 output to test Phase 6 without the webcam.
+ simulating Phase 5 output to test Phase 6 without the webcam
 Usage: python3 test_alert_trigger.py
 """
 import yaml

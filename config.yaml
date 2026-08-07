@@ -92,3 +92,31 @@ dashboard: #This is for my pHASE 8 - To view distraction history in the dsahboar
   host: "127.0.0.1" #local host address 
   port: 5050
   db_path: "data/dms_analytics.db"  # i am using the same file as Phase 7 analytics
+
+#Phase 9 - I want to compute Driver Safety Scoore /100 from distraction time time
+safety_score: 
+  scale_factor: 0.15 #i can tune this later, so far it is not too large or too small
+  exposure_unit: "minutes" #i am multplying wegihts by minutes to gwt score in each behaviour
+  weights: #i will assign higher and appropriate weights later, backed up by research
+    eat: 3
+    seatbelt: 2
+    jacket: 3
+    sunglasses: 2
+    magazine: 5
+  bands: #i am classifying the score into bands 
+    excellent: 90
+    good: 80
+    fair: 70
+
+#Phase 10 - This is my rule based Coaching Engine
+coaching:
+  baseline_weeks: 4 #i am using the last 4 weeks of data to calculate the basline score
+  increase_threshold: 1.30 #this week > baseline x 1.30 -> means increased
+  improve_threshold: 0.85 #this week < baseline x 0.85 -> means improved
+  behavior_tips: 
+    eat: "Avoid eating while driving - pull over if you need a snack"
+    seatbelt: "Adjust your seatbelt  before you start driving, not while moving"
+    jacket: "Put on or adjust your jacket when the vechicle is stopped"
+    sunglasses: "Keep your eyes on the road; adjust sunglasses before driving"
+    magazine: "Reading while driving is high risk, put your reading material down"
+    

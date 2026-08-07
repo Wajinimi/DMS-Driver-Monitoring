@@ -40,12 +40,77 @@
       border-radius: 8px;
       color: #fecaca;
     }
+
+    .score-card {
+      background: #1e293b;
+      padding: 20px 24px;
+      border-radius: 12px;
+      max-width: 900px;
+      margin-bottom: 24px;
+      border-left: 4px solid #38bdf8;
+    }
+    .score-value {
+      font-size: 42px;
+      font-weight: bold;
+      margin: 8px 0;
+    }
+    .score-band { color: #38bdf8; font-size: 18px; }
+    .score-meta { color: #64748b; font-size: 13px; margin-top: 4px; }
+    .contributors { margin-top: 12px; color: #94a3b8; font-size: 14px; list-style: none; padding: 0; }
+    .contributors li { margin: 4px 0; }
+    .coaching-card {
+      background: #1e293b;
+      padding: 20px 24px;
+      border-radius: 12px;
+      max-width: 900px;
+      margin-bottom: 24px;
+      border-left: 4px solid #22c55e;
+    }
+    .coaching-card h2 {
+      margin: 0 0 12px 0;
+      font-size: 18px;
+      color: #e2e8f0;
+    }
+    .coaching-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .coaching-list li {
+      margin: 10px 0;
+      padding: 10px 12px;
+      background: #0f172a;
+      border-radius: 8px;
+      color: #cbd5e1;
+      font-size: 14px;
+    }
+    .coaching-rule {
+      display: block;
+      font-size: 11px;
+      color: #64748b;
+      margin-bottom: 4px;
+    }
   </style>
 </head>
 <body>
   <h1>Driver Distraction Dashboard</h1>
   <p>Plot 1 — Total minutes distracted (last 7 days)</p>
   <p class="hint">Click a day bar to see activity breakdown (Plot 2).</p>
+
+  <div class="score-card" id="scoreCard">
+    <p>Weekly Safety Score</p>
+    <div class="score-value" id="scoreValue">—</div>
+    <div class="score-band" id="scoreBand">Loading…</div>
+    <div class="score-meta" id="scoreWeek"></div>
+    <ul class="contributors" id="topContributors"></ul>
+  </div>
+
+  <div class="coaching-card" id="coachingCard">
+    <h2>Weekly Coaching</h2>
+    <ul class="coaching-list" id="coachingList">
+      <li>Loading coaching tips…</li>
+    </ul>
+  </div>
 
   <div class="chart-box">
     <canvas id="weekChart"></canvas>
@@ -198,6 +263,83 @@
       }
     }
 
+    async function loadWeeklyScore() {
+      try {
+        const resp = await fetch("/api/weekly-report");
+        if (!resp.ok) {
+          document.getElementById("scoreBand").textContent = "Could not load score";
+          return;
+        }
+
+        const report = await resp.json();
+        document.getElementById("scoreWeek").textContent =
+          report.week_start + " → " + report.week_end;
+
+        if (!report.has_data) {
+          document.getElementById("scoreValue").textContent = "—";
+          document.getElementById("scoreBand").textContent = "No data this week";
+          document.getElementById("topContributors").innerHTML = "";
+          return;
+        }
+
+        document.getElementById("scoreValue").textContent =
+          report.safety_score + " /100";
+        document.getElementById("scoreBand").textContent = report.band;
+
+        const list = document.getElementById("topContributors");
+        list.innerHTML = "";
+        (report.top_contributors || []).forEach(function (item) {
+          const li = document.createElement("li");
+          li.textContent =
+            item.behavior + ": " + item.contribution +
+            " pts (" + item.pct_of_total_risk + "% of risk)";
+          list.appendChild(li);
+        });
+      } catch (err) {
+        document.getElementById("scoreBand").textContent = "Score load failed";
+        console.error(err);
+      }
+    }
+
+    async function loadWeeklyCoaching() {
+      try {
+        // I call the Phase 10 API to get score rules, tips, and trend messages
+        const resp = await fetch("/api/weekly-coaching");
+        if (!resp.ok) {
+          document.getElementById("coachingList").innerHTML =
+            "<li>Could not load coaching tips</li>";
+          return;
+        }
+
+        const data = await resp.json();
+        const list = document.getElementById("coachingList");
+        list.innerHTML = "";
+
+        const recs = data.recommendations || [];
+        if (!recs.length) {
+          list.innerHTML = "<li>No coaching tips for this week.</li>";
+          return;
+        }
+
+        // I show each message and which rule fired so coaching stays explainable
+        recs.forEach(function (rec) {
+          const li = document.createElement("li");
+          const ruleSpan = document.createElement("span");
+          ruleSpan.className = "coaching-rule";
+          ruleSpan.textContent = rec.rule;
+          li.appendChild(ruleSpan);
+          li.appendChild(document.createTextNode(rec.message));
+          list.appendChild(li);
+        });
+      } catch (err) {
+        document.getElementById("coachingList").innerHTML =
+          "<li>Coaching load failed</li>";
+        console.error(err);
+      }
+    }
+
+    loadWeeklyScore();
+    loadWeeklyCoaching();
     loadWeekChart();
   </script>
 </body>
