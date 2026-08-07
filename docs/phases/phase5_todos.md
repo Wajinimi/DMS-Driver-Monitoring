@@ -1,4 +1,4 @@
-# Phase 5 — State Manager 
+# Phase 5  State Manager 
 
 **Goal:** Filter raw AI predictions so one flickering frame doesn't trigger false alarms.
 
