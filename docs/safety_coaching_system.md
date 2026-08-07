@@ -1,12 +1,12 @@
 # Driver Safety Score & Coaching System (Phase 9+)
 
-**Decision (locked):** **Hybrid scoring** — weighted contributions internally, displayed as **Safety Score /100**.
+**My Decision :** **Hybrid scoring** : weighted contributions internally, displayed as **Safety Score /100**.
 
 **Research angle:** Explainable coaching (scores + trends + rules), not just classification.
 
 ---
 
-## Why hybrid (not pure subtract-from-100)
+## Why i chose hybrid (and not pure subtract-from-100)
 
 | Approach | Driver sees | You can explain |
 |----------|-------------|-----------------|
@@ -18,7 +18,7 @@
 
 ## Scoring formula
 
-### Step 1 — Per behavior, compute contribution
+### Step 1 : Per behavior, compute contribution
 
 For each distraction behavior `b` during a period (trip or week):
 
@@ -26,15 +26,15 @@ For each distraction behavior `b` during a period (trip or week):
 contribution[b] = exposure[b] × weight[b]
 ```
 
-**Exposure** (pick one — lock in Phase 9 Step 1):
+**Exposure** (the options i considere before going for hybrid beforer locking in Phase 9 Step 1):
 
 | Option | Formula | Best for |
 |--------|---------|----------|
 | **A — Duration (recommended)** | seconds in behavior `b` | Fair across short/long trips |
 | B — Event count | number of alert-eligible segments | Simple, ignores duration |
-| C — Hybrid | `seconds × 0.7 + count × 0.3` | Research later |
+| C — Hybrid | `seconds × 0.7 + count × 0.3` | Will Research on this later |
 
-Example weights (placeholder — add citations in `safety_score_weights.md`):
+Example weights (placeholder — i will add citations in `safety_score_weights.md`):
 
 | Behavior | Weight (pts per second or per normalized unit) |
 |----------|-----------------------------------------------|
@@ -46,15 +46,15 @@ Example weights (placeholder — add citations in `safety_score_weights.md`):
 | eating | 3 |
 | drinking | 2 |
 
-*Until Nigerian taxonomy is final, map your current classes (eat, magazine, …) to these weights.*
+*Until my Nigerian taxonomy is final, i will map my current classes (eat, magazine, …) to these weights.*
 
-### Step 2 — Total risk points
+### Step 2 Total risk points
 
 ```text
 total_risk = sum(contribution[b] for all behaviors b)
 ```
 
-### Step 3 — Normalize to 0–100 risk, then flip to safety score
+### Step 3 — Normalizing to 0–100 risk, then flip to safety score
 
 ```text
 # Cap so one terrible trip doesn't break the scale
@@ -65,7 +65,7 @@ safety_score = 100 - normalized_risk
 
 **`scale_factor`** — tune on pilot data so a typical “good” week ≈ 85–95. Start with `scale_factor = 0.1` and adjust.
 
-### Step 4 — Classification bands
+### Step 4 Classification bands
 
 | Safety Score | Label |
 |--------------|-------|
@@ -138,7 +138,7 @@ Example rules:
 | score < 70 | "Your safety score was high risk this week. Focus on reducing [top behavior]." |
 | looking_away in top 2 | "Keep eyes on the road at junctions; mount phone at eye level." |
 | phone increased >30% vs baseline | "Phone use rose compared to your usual pattern." |
-| score 90+ and improved | "Excellent concentration — keep it up." |
+| score 90+ and improved | "Excellent concentration, keep it up." |
 
 All rules log **which condition fired** (explainable).
 
@@ -168,11 +168,6 @@ Phase 8  Dashboard — score gauge, weekly report, trends
 
 ---
 
-## What we need before coding
-
-1. Final behavior list (from Nigerian pilot) — weights table updated  
-2. Lock exposure = duration (seconds) for v1  
-3. Calibrate `scale_factor` on 5–10 real trips  
 
 ---
 
