@@ -9,7 +9,7 @@
 ## TODO checklist
 
 
-| Step | What we build                                                  | Status |
+| Step | To build                                                  | Status |
 | ---- | -------------------------------------------------------------- | ------ |
 | 1    | Verify `.pth` weights load into `swin3d_t`                     | ✅      |
 | 2    | Create `src/phase4/inference_engine.py` load model             | ✅      |
