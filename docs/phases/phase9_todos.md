@@ -10,7 +10,7 @@
 
 ## TODO checklist
 
-| Step | What we build | Status |
+| Step | What i am building | Status |
 |------|---------------|--------|
 | 1 | `safety_score` section in `config.yaml` (weights, bands, scale_factor) | ✅ |
 | 2 | `src/phase9/safety_score_engine.py` — contribution math | ✅ |
