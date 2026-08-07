@@ -1,6 +1,6 @@
-# Phase 9 — Safety Score Engine (we build this together)
+# Phase 9 Safety Score Engine (we build this together)
 
-**Locked:** Hybrid scoring — weighted contributions → **Safety Score /100**.
+**Locked:** Hybrid scoring , weighted contributions → **Safety Score /100**.
 
 **Input:** Phase 7 `activities` table (behavior, `duration_sec`, timestamps).
 
@@ -22,7 +22,7 @@
 
 ---
 
-## Success criteria
+## My sSuccess criteria
 
 When Phase 9 is done:
 
