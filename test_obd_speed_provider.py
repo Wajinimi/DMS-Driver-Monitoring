@@ -1,4 +1,4 @@
-# Phase 12 — I test ObdSpeedProvider without a real car (fake adapter)
+# Phase 12 — I test ObdSpeedProvider 
 from src.phase12.drive_context import DriveContext
 from src.phase12.obd_speed_provider import ObdSpeedProvider, _to_kmh
 
