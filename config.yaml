@@ -60,8 +60,8 @@ alert_trigger: # Phase 6 — I fire alerts when a distraction lasts long enough
     sunglasses: "/System/Library/Sounds/Tink.aiff"
     magazine: "/System/Library/Sounds/Hero.aiff"
   cooldown_seconds: 10  # I wont repeat the same alert for 10 seconds
-  speed_gating_enabled: false  # i willl turn this on in the car when I have GPS speed
-  min_speed_kmh: 5  # I only alert above this speed when gating is enabled, i can also change it later
+  speed_gating_enabled: true  # second check inside AlertTrigger while monitoring is ON
+  min_speed_kmh: 10  # alerts only fire above this speed (can be lower than activate threshold)
   duration_thresholds:  # I alert after this many seconds in a stable state
     eat: 2.0
     seatbelt: 5.0
@@ -120,3 +120,33 @@ coaching:
     sunglasses: "Keep your eyes on the road; adjust sunglasses before driving"
     magazine: "Reading while driving is high risk, put your reading material down"
     
+
+# Phase 12 — I am only running the DMS pipeline when the car is really driving
+drive_gating:
+  enabled: true
+  activate_speed_kmh: 15      # turn monitoring ON at this speed
+  deactivate_speed_kmh: 5       # turn monitoring OFF after holding below this speed
+  deactivate_hold_sec: 10       # seconds below deactivate speed before OFF
+  require_ignition_run: true
+  mock:
+    enabled: true               # laptop testing: +/- speed, i = ignition
+    default_speed_kmh: 0
+    default_ignition: RUN
+
+# Phase 12 — end-of-trip summary card on the webcam window
+trip_summary:
+  display_sec: 12   # seconds before auto-dismiss
+  max_tips: 2       # coaching lines on screen (keep it short for the driver)
+
+# Phase 11 —this is optional weekly email (not required for OEM product; kept for demos)
+weekly_delivery:
+  enabled: false
+  provider: resend
+  driver:
+    name: "Waji"
+    email: "fagbuaroboluwaji@yahoo.com"
+  resend:
+    from_address: "agent@neuralforgesystems.org"
+    from_name: "Neural Forge DMS"
+    api_key_env: "DMS_RESEND_API_KEY"
+  dashboard_url: "http://127.0.0.1:5050"

@@ -51,4 +51,11 @@ class StateManager : #i am building a state manager class that will help me mana
 
         return self._activity_start_time, self._current_activity, conf, duration
 
+    def reset(self):
+        """I clear state when DMS leaves monitoring mode (e.g. parked)."""
+        self._current_activity = self._normal_class
+        self._history = []
+        self._activity_start_time = None
+        logger.info("I reset the State Manager to '%s'", self._normal_class)
+
 

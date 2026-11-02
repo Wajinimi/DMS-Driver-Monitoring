@@ -260,3 +260,18 @@ class RecommendationEngine:
             "trends": trends,
             "recommendations": recommendations,
         }
+
+    def generate_trip_coaching(self, trip_report):
+        """I build coaching for one trip only (no weekly trend messages)."""
+        recommendations = []
+        recommendations.extend(self._score_band_rules(trip_report))
+        recommendations.extend(self._behavior_tips_rules(trip_report))
+        for rec in recommendations:
+            rec["message"] = rec["message"].replace("this week", "this trip")
+        return {
+            "has_data": trip_report.get("has_data", False),
+            "safety_score": trip_report.get("safety_score"),
+            "band": trip_report.get("band"),
+            "top_contributors": trip_report.get("top_contributors", []),
+            "recommendations": recommendations,
+        }

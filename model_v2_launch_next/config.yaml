@@ -1,0 +1,165 @@
+# Model Version 2 to Launch Next
+
+
+camera:
+  source: 0
+  target_fps: 15
+  frame_width: 640
+  frame_height: 480
+  queue_size: 30
+  watchdog_timeout_ms: 2000
+
+logging:
+  level: INFO
+
+buffer:
+  clip_length: 16
+  stride: 8
+  model_size: 224
+  normalize: "imagenet"
+
+
+model:
+  clip_length: 16
+  model_size: 224
+  num_classes: 10
+  class_names:
+    - eating
+    - drinking
+    - texting
+    - calling
+    - distraction_outside
+    - distraction_in_car
+    - normal_driving
+    - reaching_object
+    - grooming_cosmetics
+    - wearing_clothes_jacket
+  normalize: "imagenet"
+  imagenet_mean: [0.485, 0.456, 0.406]
+  imagenet_std: [0.229, 0.224, 0.225]
+
+pytorch:
+  weights_path: "model_swin/drive_and_act_swin_v2.pth"
+  device: "mps"
+  architecture: "swin3d_t"
+  allow_missing_weights: true  
+state_manager:
+  default_threshold: 0.50
+  exit_threshold: 0.35
+  normal_class: "normal_driving"
+  smoothing_windows:
+    eating: 3
+    drinking: 3
+    texting: 3
+    calling: 3
+    distraction_outside: 4
+    distraction_in_car: 4
+    normal_driving: 3
+    reaching_object: 3
+    grooming_cosmetics: 4
+    wearing_clothes_jacket: 5
+
+alert_trigger:
+  shadow_mode: false
+  audio_enabled: true
+  default_sound: "/System/Library/Sounds/Glass.aiff"
+  activity_sounds:
+    eating: "/System/Library/Sounds/Pop.aiff"
+    drinking: "/System/Library/Sounds/Pop.aiff"
+    texting: "/System/Library/Sounds/Hero.aiff"
+    calling: "/System/Library/Sounds/Hero.aiff"
+    distraction_outside: "/System/Library/Sounds/Tink.aiff"
+    distraction_in_car: "/System/Library/Sounds/Ping.aiff"
+    reaching_object: "/System/Library/Sounds/Blow.aiff"
+    grooming_cosmetics: "/System/Library/Sounds/Tink.aiff"
+    wearing_clothes_jacket: "/System/Library/Sounds/Blow.aiff"
+  cooldown_seconds: 10
+  speed_gating_enabled: true
+  min_speed_kmh: 10
+  duration_thresholds:
+    eating: 2.0
+    drinking: 2.0
+    texting: 1.5
+    calling: 2.0
+    distraction_outside: 2.5
+    distraction_in_car: 2.5
+    reaching_object: 2.0
+    grooming_cosmetics: 2.5
+    wearing_clothes_jacket: 3.0
+  messages:
+    eating: "Please avoid eating while driving"
+    drinking: "Please avoid drinking while driving — pull over if you need a sip"
+    texting: "Please do not text while driving"
+    calling: "Please use hands-free if you must take a call"
+    distraction_outside: "Please keep your eyes on the road, not outside the cabin"
+    distraction_in_car: "Please do not look at in-car screens while driving"
+    reaching_object: "Please stop reaching for objects while the car is moving"
+    grooming_cosmetics: "Please finish grooming before you drive"
+    wearing_clothes_jacket: "Please adjust clothing when the vehicle is stopped"
+
+analytics:
+  db_path: "data/dms_v2_analytics.db"
+  retention_days: 90
+  distraction_activities:
+    - eating
+    - drinking
+    - texting
+    - calling
+    - distraction_outside
+    - distraction_in_car
+    - reaching_object
+    - grooming_cosmetics
+    - wearing_clothes_jacket
+
+safety_score:
+  scale_factor: 0.15
+  exposure_unit: "minutes"
+  weights:
+    eating: 4
+    drinking: 3
+    texting: 10
+    calling: 8
+    distraction_outside: 7
+    distraction_in_car: 6
+    reaching_object: 6
+    grooming_cosmetics: 5
+    wearing_clothes_jacket: 4
+  bands:
+    excellent: 90
+    good: 80
+    fair: 70
+
+coaching:
+  baseline_weeks: 4
+  increase_threshold: 1.30
+  improve_threshold: 0.85
+  behavior_tips:
+    eating: "Avoid eating while driving — pull over if you need a snack"
+    drinking: "Keep drinks in a holder; take sips when stopped"
+    texting: "Texting while driving is high risk — wait until you park"
+    calling: "Use a hands-free setup; do not hold the phone"
+    distraction_outside: "Glance, then return to the road — do not stare outside"
+    distraction_in_car: "Set the radio and nav before you move"
+    reaching_object: "If you dropped something, pull over first"
+    grooming_cosmetics: "Finish grooming before you start the trip"
+    wearing_clothes_jacket: "Put on or adjust jackets when the vehicle is stopped"
+
+
+drive_gating:
+  enabled: true
+  activate_speed_kmh: 15
+  deactivate_speed_kmh: 5
+  deactivate_hold_sec: 10
+  require_ignition_run: true
+  source: obd
+  obd:
+    # I leave port empty so I auto-pick /dev/cu.usbserial* on Mac
+    port: ""
+    baudrate: 115200
+    timeout: 0.2
+    poll_interval_sec: 0.25
+    rpm_run_threshold: 400
+
+trip_summary:
+  display_sec: 12
+  max_tips: 2

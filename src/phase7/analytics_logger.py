@@ -96,6 +96,12 @@ class AnalyticsLogger:
 
         logger.info("I started trip %s", trip_id)
         return trip_id
+
+    @property
+    def active_trip_id(self):
+        """I expose the current trip id so the live loop can check if a trip is open."""
+        return self._current_trip_id
+
         
 
 
@@ -224,6 +230,10 @@ class AnalyticsLogger:
         self._tracking_max_conf = 0.0
 
 
+
+    def pause_tracking(self):
+        """I flush any open activity segment when monitoring pauses (parked / standby)."""
+        self._flush_current_segment()
 
     def update_state(self, activity, confidence, activity_start_time):
         if self._current_trip_id is None:
