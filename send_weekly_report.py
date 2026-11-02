@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+
 """Phase 11 Step 3 — send the weekly safety email for the current 7-day window."""
 import argparse
 import os
