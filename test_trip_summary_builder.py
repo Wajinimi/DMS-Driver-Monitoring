@@ -1,4 +1,4 @@
-# Phase 12 — I test trip summary text building without the webcam
+# Phase 12 — I test trip summary 
 import yaml
 
 from src.phase12.trip_summary_builder import build_trip_report, format_terminal_report
