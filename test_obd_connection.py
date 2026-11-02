@@ -1,9 +1,7 @@
-#!/usr/bin/env python3
-"""Hardware smoke test — plug OBDLink USB in, ignition ON, then run this."""
+
+"""Hardwaretest  plug OBDLink USB ignition ON"""
 import time
-
 import yaml
-
 from src.phase12.obd_speed_provider import ObdSpeedProvider
 
 
